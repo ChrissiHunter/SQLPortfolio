@@ -121,6 +121,7 @@ INSERT INTO sales(transaction_date,product,price,payment_type,name,city,state,co
 
 
 --Identifies number of items sold and their average cost per item
+
 SELECT product, COUNT (*) AS items_sold, AVG(price) AS avg_price  
 FROM sales 
   GROUP BY product;
@@ -138,6 +139,7 @@ FROM sales
 
 
 --Labels a country's total sales as top, above, average or needs growth according to its sale total
+
 SELECT country, SUM(price) as total_sales,
       CASE 
           WHEN SUM(price)>50000 THEN "Top Sales"
