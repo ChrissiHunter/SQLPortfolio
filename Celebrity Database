@@ -74,7 +74,7 @@ Marriage is ordered from oldest to youngest.*/
 
 SELECT famous_people.celeb_name AS name, spouse.celeb_name AS spouse, famous_people.married_yr
 FROM famous_people
-    LEFT OUTER JOIN famous_people spouse
+    INNER JOIN famous_people spouse
     ON famous_people.spouse = spouse.id
     GROUP BY famous_people.married_yr
     ORDER BY famous_people.married_yr;
@@ -85,8 +85,8 @@ Removes Heather Helm who is not a known celebrity.*/
 
 SELECT famous_people.celeb_name, famous_people.legal_name AS legal_name, career.job AS job, career.famous_work
 FROM  famous_people
-    LEFT OUTER JOIN career ON
-            famous_people.id = career.person_id
+    LEFT OUTER JOIN career 
+    ON famous_people.id = career.person_id
     WHERE career.job NOT NULL
     ORDER BY famous_people.celeb_name;
 
@@ -101,8 +101,8 @@ FROM career
 
 SELECT famous_people.celeb_name, career.famous_work
 FROM famous_people
-    JOIN career ON
-        famous_people.id = career.person_id
+    INNER JOIN career
+    ON famous_people.id = career.person_id
     WHERE career.famous_work = "Game of Thrones"
         OR career.famous_work = "Scooby-Doo"
         OR career.famous_work = "How I Met Your Mother"
