@@ -1,0 +1,120 @@
+/* Table about celebrities, their spouses, and the year they were married.*/
+
+CREATE TABLE famous_people (id INTEGER PRIMARY KEY, celeb_name TEXT, legal_name TEXT, married_yr INTEGER, spouse INTEGER);
+
+INSERT INTO famous_people VALUES (1,"Joe Jonas", "Joseph Adam Jonas", 2019, 2);
+INSERT INTO famous_people VALUES (2,"Sophie Turner", "Sophie Belinda Jones nee Turner", 2019, 1);
+INSERT INTO famous_people VALUES (3, "Freddie Prinze Jr.","Freddie James Prinze Jr.",2002, 4);
+INSERT INTO famous_people VALUES (4, "Sarah Michelle Gellar", "Sarah Michelle Prinze nee Gellar", 2002, 3);
+INSERT INTO famous_people VALUES (5,"Peter Dinklage", "Peter Hayden Dinklage",2005, 6);
+INSERT INTO famous_people VALUES (6, "Erica Schmidt", "Erica Schmidt", 2005, 5);
+INSERT INTO famous_people VALUES (7, "Matthew Lillard", "Matthew Lyn Lillard", 2000,8);
+INSERT INTO famous_people VALUES (8, "Heather Helm", "Heather Helm", 2000, 7);
+INSERT INTO famous_people VALUES (9, "Ben Affleck", "Benjamin Geza Affleck", 2022, 10);
+INSERT INTO famous_people VALUES (10, "Jennifer Lopez", " Jennifer Lynn Affleck nee Lopez", 2022, 9);
+INSERT INTO famous_people VALUES (11, "Beyonce'", "Beyonce' Giselle Knowles-Carter", 2008,12);
+INSERT INTO famous_people VALUES (12, "Jay-Z", "Shawn Corey Carter", 2008, 11);
+INSERT INTO famous_people VALUES (13, "Blake Lively", "Blake Ellender Livley", 2012,14);
+INSERT INTO famous_people VALUES (14, "Ryan Reynolds", "Ryan Rodney Reynolds", 2012, 13);
+INSERT INTO famous_people VALUES (15, "Prince Harry", "Henry Charles Albert David", 2018, 16);
+INSERT INTO famous_people VALUES (16, "Meghan Markle", "Rachel Meghan Markle", 2018, 15);
+INSERT INTO famous_people VALUES (17, "George Clooney", "George Timothy Clooney", 2013, 18);
+INSERT INTO famous_people VALUES (18, "Amal Clooney", "Amal Clooney nee Alamuddin", 2013, 17);
+INSERT INTO famous_people VALUES (19, "Neil Patrick Harris", "Neil Patrick Harris", 2014, 20);
+INSERT INTO famous_people VALUES (20, "David Burtka", "David Michael Burtka",2014, 19);
+INSERT INTO famous_people VALUES (21, "Barack Obama", "Barack Hussein Obama II", 1990, 22);
+INSERT INTO famous_people VALUES (22, "Michelle Obama", "Michelle LaVaughn Robinson Obama", 1990, 21);
+INSERT INTO famous_people VALUES (23, "John Krasinski", "John Burke Krasinski", 2010, 24);
+INSERT INTO famous_people VALUES (24, "Emily Blunt", "Emily Olivia Laura Blunt", 2010, 23);
+INSERT INTO famous_people VALUES (25, "Simone Biles", "Simone Biles Owens", 2023, 26);
+INSERT INTO famous_people VALUES (26, "Jonathan Owens", "Jonathan Owens", 2023, 25);
+INSERT INTO famous_people VALUES (27, "Tom Hanks", "Thomas Jeffery Hanks", 1988, 28);
+INSERT INTO famous_people VALUES (28, "Rita Wilson", "Margarita Ibranhimoff", 1988, 27);
+INSERT INTO famous_people VALUES (29, "Viola Davis", "Viola Davis", 2003, 30);
+INSERT INTO famous_people VALUES (30, "Julius Tennon", "Julius William Tennon", 2003, 29);
+
+/* Table about a celebrity's career and what they are known for.*/
+
+CREATE TABLE career (id INTEGER PRIMARY KEY, person_id INTEGER, job TEXT, famous_work TEXT);
+
+INSERT INTO career VALUES (1,1,"Singer", "Jonas Brothers");
+INSERT INTO career VALUES (2,2,"Actress","Game of Thrones");
+INSERT INTO career VALUES (3,3, "Actor", "Scooby-Doo");
+INSERT INTO career VALUES (4,4, "Actress", "Buffy the Vampire Slayer");
+INSERT INTO career VALUES (5,5, "Actor", "Game of Thrones");
+INSERT INTO career VALUES (6,6, "Writer", "Cyrano");
+INSERT INTO career VALUES (7,7, "Actor", "Scooby-Doo");
+INSERT INTO career VALUES (8,8, NULL, NULL);
+INSERT INTO career VALUES (9,9, "Actor", "Good Will Hunting");
+INSERT INTO career VALUES (10,10, "Actress/sSinger", "Selena");
+INSERT INTO career VALUES (11,11, "Singer", "Crazy In Love");
+INSERT INTO career VALUES (12,12, "Rapper", "Heart of the City (Ain't No Love)");
+INSERT INTO career VALUES (13,13, "Actress", "Elvis and Anabelle");
+INSERT INTO career VALUES (14,14, "Actor", "Deadpool");
+INSERT INTO career VALUES (15,15, "Prince", "Duke of Sussex");
+INSERT INTO career VALUES (16,16, "Actress","Suits");
+INSERT INTO career VALUES (17,17, "Actor", "Ocean's Eleven");
+INSERT INTO career VALUES (18,18, "Barrister", "Co-founder and Co-President of Clooney Foundation of Justice");
+INSERT INTO career VALUES (19,19, "Actor", "How I Met Your Mother");
+INSERT INTO career VALUES (20,20, "Actor/Chef", "How I Met Your Mother");
+INSERT INTO career VALUES (21,21, "Former President", "44th President of United States");
+INSERT INTO career VALUES (22,22, "Attorney/Author", "First Lady of the United States");
+INSERT INTO career VALUES (23,23, "Actor/Filmmaker", "The Office");
+INSERT INTO career VALUES (24,24, "Actress", "The Devil Wears Prada");
+INSERT INTO career VALUES (25, 25, "Athlete", "Olympic Gold Medalist");
+INSERT INTO career VALUES (26, 26, "Athlete", "Green Bay Pakers");
+INSERT INTO career VALUES (27, 27, "Actor", "Forest Gump");
+INSERT INTO career VALUES (28, 28, "Actress/Singer/Producer", "My Big Fat Greek Wedding");
+INSERT INTO career VALUES (29,29, "Actress/Producer", "Recieved Emmy, Grammer, Oscar and a Tony");
+INSERT INTO career VALUES (30,30, "Actor/Producer", "Dazed and Confused");
+
+
+/*Query that shows famous couples and their marriage year.
+Marriage is ordered from oldest to youngest.*/
+
+SELECT famous_people.celeb_name AS name, spouse.celeb_name AS spouse, famous_people.married_yr
+FROM famous_people
+    LEFT OUTER JOIN famous_people spouse
+    ON famous_people.spouse = spouse.id
+    GROUP BY famous_people.married_yr
+    ORDER BY famous_people.married_yr;
+
+/*Lists all celebrities in the database and 
+provides their job type and what work they were famous for.  
+Removes Heather Helm who is not a known celebrity.*/
+
+SELECT famous_people.celeb_name, famous_people.legal_name AS legal_name, career.job AS job, career.famous_work
+FROM  famous_people
+    LEFT OUTER JOIN career ON
+            famous_people.id = career.person_id
+    WHERE career.job NOT NULL
+    ORDER BY famous_people.celeb_name;
+
+/*Finds famous work that 2 or more celebrities worked on together.*/ 
+SELECT career.famous_work, COUNT(career.famous_work)
+FROM career
+    GROUP BY career.famous_work
+    HAVING COUNT(career.famous_work)>1;
+
+/*From the previous query, identifies which actors were in 
+"How I Met Your Mother", "Game of Thrones" and "Scooby-Doo" together.*/
+
+SELECT famous_people.celeb_name, career.famous_work
+FROM famous_people
+    JOIN career ON
+        famous_people.id = career.person_id
+    WHERE career.famous_work = "Game of Thrones"
+        OR career.famous_work = "Scooby-Doo"
+        OR career.famous_work = "How I Met Your Mother"
+    ORDER BY career.famous_work;
+    
+
+
+    
+    
+
+    
+    
+
+
+
