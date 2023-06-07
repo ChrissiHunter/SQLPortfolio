@@ -1,0 +1,46 @@
+/* Netflix Database
+Inclucdes show id, title, rating, release year, description, 
+director, cast, type, country, date added, duration, and where listed
+Taken from "CharlotteChaze/BreakIntoTech"*/
+
+-- Query #1 - How many movie titles are there in the database? 
+
+SELECT COUNT(*) 
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info
+    WHERE info.type = 'Movie';
+
+-- Query #2 - When was the most recent batch of tv shows and/or movies added to the database?
+
+SELECT MAX(DATE(info.date_added))
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info;
+
+-- or (Less condensed solution)
+
+SELECT DATE(info.date_added)
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info
+    WHERE DATE(info.date_added) IS NOT NULL
+    ORDER BY DATE(info.date_added) DESC
+    LIMIT 1;
+
+-- Query #3 - List all the movies and tv shows in alphabetical order.
+
+SELECT info.title
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info
+    WHERE info.title IS NOT NULL
+    ORDER BY info.title ASC;
+
+-- Query #4 - Who was the Director for the movie Bright Star?
+
+SELECT people.director, info.title
+FROM "CharlotteChaze/BreakIntoTech"."netflix_people" people
+    INNER JOIN "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info
+    ON people.show_id = info.show_id
+    WHERE info.title = 'Bright Star';
+
+-- Query #5 - What is the oldest movie in the database and what year was it made?
+
+SELECT info.title, info.release_year
+FROM "CharlotteChaze/BreakIntoTech"."netflix_titles_info" info
+    ORDER BY info.release_year
+    LIMIT 1;
+ 
