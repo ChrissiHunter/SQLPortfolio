@@ -1,0 +1,71 @@
+--In this SQL, I am querying a database with multiple tables for quanitifying statistics about customer and order data.
+
+--How many orders were placed in January?
+
+SELECT COUNT(*) AS total_order FROM BIT_DB.JanSales
+    WHERE LENGTH(orderID)=6
+    AND orderID <>'Order ID';
+    
+
+--How many of those orders were for an iPhone?
+   
+SELECT COUNT(*) AS iPhone_order FROM BIT_DB.JanSales
+    WHERE LENGTH(orderID)=6
+    AND orderID <> 'Order ID'
+    AND Product = 'iPhone';
+    
+--Select the customer account numbers for all the orders that were placed in February.
+
+SELECT cust.acctnum FROM BIT_DB.customers cust
+    INNER JOIN BIT_DB.FebSales feb
+    ON cust.order_id = feb.orderID
+    WHERE LENGTH(orderID)=6
+    AND orderID <> 'Order ID';
+    
+--Which product was the cheapest one sold in January, and what was the price?
+
+SELECT jan.Product, jan.price AS Price FROM BIT_DB.JanSales jan
+     WHERE price IN (SELECT MIN(price) FROM BIT_DB.JanSales)
+     AND LENGTH(orderID)=6
+     AND orderID <> 'Order ID'
+     GROUP BY jan.Product;
+     
+--What is the total revenue for each product sold in January? 
+
+SELECT jan.Product,
+    ROUND(SUM(jan.Quantity)*jan.price,2) AS total_revenue
+FROM BIT_DB.JanSales jan
+    WHERE LENGTH(orderID)=6
+        AND orderID <> 'Order ID'   
+    GROUP BY jan.Product;
+    
+--Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, 
+--how many of each were sold, and what was the total revenue?
+
+SELECT feb.Product, 
+    feb.Quantity,
+    ROUND(SUM(feb.Quantity)*feb.price,2) AS total_revenue
+FROM BIT_DB.FebSales feb
+    WHERE LENGTH(orderID)=6
+    AND orderID <> 'Order ID'
+    AND feb.location = '548 Lincoln St, Seattle, WA 98101'
+    GROUP BY feb.Product;
+    
+--How many customers ordered more than 2 products at a time in February, 
+--and what was the average amount spent for those customers?
+
+SELECT COUNT(cust.acctnum) AS total_cust, 
+    ROUND(AVG(feb.Quantity*feb.price),4) AS avg_amount_spent
+FROM BIT_DB.customers cust
+    INNER JOIN BIT_DB.FebSales feb
+    ON cust.order_id = feb.orderID
+    WHERE LENGTH(orderID)=6
+    AND orderID <> 'Order ID'
+    AND feb.Quantity >2
+    ORDER BY cust.acctnum;
+
+    
+
+
+    
+
