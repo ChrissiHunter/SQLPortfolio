@@ -1,0 +1,21 @@
+## Query an alphabetically ordered list of all names in OCCUPATIONS,
+## immediately followed by the first letter of each profession as a parenthetical.
+## Example: Input - Ashley Doctor; Ouput - Ashley(D)
+## Query the number of ocurrences of each occupation in OCCUPATIONS. 
+## Sort the occurrences in ascending order, and output them in the following format:
+##     There are a total of [occupation_count] [occupation]s.
+
+WITH ol AS (
+    SELECT LEFT(occupation,1) AS occ_letter,
+    name
+    FROM occupations
+    )
+    
+SELECT CONCAT(ol.name,'(',occ_letter, ')')
+FROM ol
+ORDER by ol.name;
+
+SELECT CONCAT("There are a total of ", COUNT(occupation), " ", LOWER(occupation), "s.")
+FROM occupations
+GROUP BY occupation
+ORDER BY COUNT(occupation) ASC, occupation ASC;
