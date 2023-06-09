@@ -1,0 +1,162 @@
+--Spotify's Top 50 Songs List in 2021
+--I downloaded Spotify's data from Kaggle and created
+--a table to insert the data into. 
+--Finally, I used SQL to analyze the data.
+
+
+--Table creation
+
+CREATE TABLE BIT_DB.SpotifyData(
+    ID INTEGER PRIMARY KEY,
+    artist_name VARCHAR NOT NULL,
+    track_name VARCHAR NOT NULL,
+    track_id VARCHAR NOT NULL,
+    popularity INTEGER NOT NULL,
+    danceability DECIMAL(3,4) NOT NULL,
+    energy DECIMAL(4,3) NOT NULL,
+    song_key INTEGER NOT NULL,
+    loudness DECIMAL(5,3) NOT NULL,
+    song_mode INTEGER NOT NULL,
+    speechiness DECIMAL(5,4) NOT NULL,
+    accousticness DECIMAL (6,5) NOT NULL,
+    instrumentalness DECIMAL (8,7) NOT NULL,
+    liveness DECIMAL (5,4) NOT NULL,
+    valence DECIMAL (4,3) NOT NULL,
+    tempo DECIMAL (6,3) NOT NULL,
+    duration_ms INTEGER NOT NULL,
+    time_signature INTEGER NOT NULL);
+    
+--I imported SpotifyData.csv into the table. 
+--Then I started to analyze the data. 
+    
+--What is the most popular song and who is it by?
+
+SELECT spot.track_name AS song, spot.artist_name, spot.popularity
+FROM BIT_DB.SpotifyData spot
+    WHERE spot.popularity>94
+    ORDER BY spot.popularity DESC;
+    
+
+--What is the longest running song and how long is it?
+
+SELECT spot.track_name AS song, spot.artist_name, MAX(spot.duration_ms)
+FROM BIT_DB.SpotifyData spot;
+
+--What are the top 10 songs that would be good to play at a club 
+--based upon dancability and high energy (energy > 0.700).  Returns track name, artist, 
+--danceablity index and energy index.
+
+SELECT spot.track_name AS song, spot.artist_name, spot.danceability, spot.energy
+FROM BIT_DB.SpotifyData spot
+    WHERE spot.energy > 0.700
+    ORDER BY spot.danceability DESC
+    LIMIT 10;
+    
+--What key are the songs played in?  Returns the name of the song and the key.
+SELECT spot.track_name AS song, 
+    CASE 
+        WHEN spot.song_key = 0 THEN "C"
+        WHEN spot.song_key = 1 THEN "C#"
+        WHEN spot.song_key = 2 THEN "D"
+        WHEN spot.song_key = 3 THEN "D#"
+        WHEN spot.song_key = 4 THEN "E"
+        WHEN spot.song_key = 5 THEN "F"
+        WHEN spot.song_key = 6 THEN "F#"
+        WHEN spot.song_key = 7 THEN "G"
+        WHEN spot.song_key = 8 THEN "G#"
+        WHEN spot.song_key = 9 THEN "A"
+        WHEN spot.song_key = 10 THEN "A#"
+        ELSE "B"
+    END AS musical_key         
+FROM BIT_DB.SpotifyData spot;
+
+--What are the most popular keys in the top 50?
+SELECT COUNT(spot.track_name) AS quantity, 
+    CASE 
+        WHEN spot.song_key = 0 THEN "C"
+        WHEN spot.song_key = 1 THEN "C#"
+        WHEN spot.song_key = 2 THEN "D"
+        WHEN spot.song_key = 3 THEN "D#"
+        WHEN spot.song_key = 4 THEN "E"
+        WHEN spot.song_key = 5 THEN "F"
+        WHEN spot.song_key = 6 THEN "F#"
+        WHEN spot.song_key = 7 THEN "G"
+        WHEN spot.song_key = 8 THEN "G#"
+        WHEN spot.song_key = 9 THEN "A"
+        WHEN spot.song_key = 10 THEN "A#"
+        ELSE "B"
+    END AS musical_key        
+FROM BIT_DB.SpotifyData spot
+    GROUP BY spot.song_key
+    ORDER BY COUNT(spot.track_name) DESC
+    LIMIT 4;
+ 
+--What range of keys create the most popular songs (popularity rating 90 or higher)?
+--Helps predicts a hit based upon the key. 
+--Results show that songs in the range of A# to C are most likely to be a hit.
+  
+SELECT COUNT(spot.track_name) num_of_songs, 
+    CASE 
+        WHEN spot.song_key = 0 THEN "C"
+        WHEN spot.song_key = 1 THEN "C#"
+        WHEN spot.song_key = 2 THEN "D"
+        WHEN spot.song_key = 3 THEN "D#"
+        WHEN spot.song_key = 4 THEN "E"
+        WHEN spot.song_key = 5 THEN "F"
+        WHEN spot.song_key = 6 THEN "F#"
+        WHEN spot.song_key = 7 THEN "G"
+        WHEN spot.song_key = 8 THEN "G#"
+        WHEN spot.song_key = 9 THEN "A"
+        WHEN spot.song_key = 10 THEN "A#"
+        ELSE "B"
+    END AS musical_key
+FROM BIT_DB.SpotifyData spot
+    WHERE spot.popularity >89
+    GROUP BY spot.song_key
+    ORDER BY num_of_songs DESC
+    LIMIT 4;
+     
+
+--Are major or minor keys more present in the most popular songs?
+
+SELECT COUNT(spot.song_mode), 
+    CASE
+        WHEN spot.song_mode = 0 THEN "minor"
+        ELSE "major"
+    END AS major_minor_key
+FROM BIT_DB.SpotifyData spot
+    WHERE spot.popularity >89
+     GROUP BY spot.song_mode;
+     
+
+--What is the range BPM for the top dancaeable songs? 
+-- This helps dance clubs identify the ideal BPM dance range.
+SELECT MIN(spot.tempo) AS min_tempo_bpm, MAX(spot.tempo) AS max_tempo_bpm
+FROM BIT_DB.SpotifyData spot
+    WHERE spot.danceability > 0.8
+    ORDER BY spot.danceability DESC;
+
+
+-- What are the average characteristics of the top 50 songs?  
+--Are they more like rap and include spoken words?
+--Are they more accoustical or instrumental?
+--Identifies the the above characteristics based upon the aggregated averages.
+SELECT 
+    CASE 
+        WHEN AVG(spot.speechiness)> 0.33 THEN "rap"
+        ELSE "musical and non-speech-like tracks" 
+        END AS vocal_characteristics, 
+    (SELECT 
+        CASE
+            WHEN AVG(spot.accousticness) > 0.75 THEN "very accoustical"
+            WHEN AVG(spot.accousticness) > 0.5 THEN "somewhat accoustical"
+            ELSE "not very accoustical"
+            END AS avg_acoustics) AS accoustic_characteristics, 
+    (SELECT
+        CASE 
+            WHEN AVG(spot.instrumentalness)>0.5 THEN "instrumental track"
+            ELSE "includes vocals"
+            END ) AS instrumental_characteristics
+ FROM BIT_DB.SpotifyData spot;
+
+    
