@@ -34,4 +34,15 @@ UPDATE STEAMCHARTS SET gamename = 'STAR WARS Jedi: Fallen Order' WHERE gamename 
 UPDATE STEAMCHARTS SET gamename = 'ACE COMBAT 7: Skies Unknown' WHERE gamename = 'ACE COMBAT� 7: SKIES UNKNOWN';   
 UPDATE STEAMCHARTS SET gamename = 'Ni no Kuni II: Revenant Kingdom' WHERE gamename = 'Ni no Kuni� II: Revenant Kingdom'; 
 UPDATE STEAMCHARTS SET gamename = 'Hitman 2' WHERE gamename = 'HITMAN� 2'; 
-    
+UPDATE STEAMCHARTS SET gamename = 'DRAGON QUEST XI: Echoes of an Elusive Age' WHERE gamename = 'DRAGON QUEST� XI: Echoes of an Elusive Age�'; 
+UPDATE STEAMCHARTS SET gamename = 'DARK SOULS: Remastered' WHERE gamename = 'DARK SOULS�: REMASTERED';  
+UPDATE STEAMCHARTS SET gamename = 'Crash Bandicoot N.Sane Trilogy' WHERE gamename = 'Crash Bandicoot� N. Sane Trilogy'; 
+UPDATE STEAMCHARTS SET gamename = "Tom Clancy's Ghost Recon" WHERE gamename = "Tom Clancy's Ghost Recon� Wildlands"; 
+UPDATE STEAMCHARTS SET gamename = 'NieR:Automata' WHERE gamename = 'NieR:Automata�';    
+UPDATE STEAMCHARTS SET gamename = 'Injustice 2' WHERE gamename = 'Injustice� 2'; 
+UPDATE STEAMCHARTS SET gamename = 'theHunter: Call of the Wild' WHERE gamename = 'theHunter: Call of the Wild�'; 
+UPDATE STEAMCHARTS SET gamename = 'Endless Space 2' WHERE gamename = 'Endless Space� 2';  
+UPDATE STEAMCHARTS SET gamename = 'EVERSPACE' WHERE gamename = 'EVERSPACE�'; 
+UPDATE STEAMCHARTS SET gamename = 'Dues Ex: Mankind Divided' WHERE gamename = 'Deus Ex: Mankind Divided�'; 
+UPDATE STEAMCHARTS SET gamename = 'Dark Souls III' WHERE gamename = 'DARK SOULS� III';    
+UPDATE STEAMCHARTS SET gamename = 'Life is Strange' WHERE gamename = 'Life is Strange�';     
