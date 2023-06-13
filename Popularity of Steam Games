@@ -2,3 +2,36 @@
 -- csv downloaded from kaggle.com
 -- Licensed: CCO - Public Domain by Michal Bogacz 
 -- https://www.kaggle.com/datasets/michau96/popularity-of-games-on-steam
+
+--Identifying unrecognized characters imported from csv file
+
+SELECT DISTINCT gamename FROM STEAMCHARTS
+GROUP BY gamename
+HAVING gamename LIKE "%�%"
+ORDER BY MIN(year) DESC;
+
+-- Data cleaning game names. Removed unrecognized characters. Standardized capitalizations. Removed " " from the beginning and ending of title
+
+UPDATE STEAMCHARTS SET gamename = 'The Sims 4' WHERE gamename = 'The Sims� 4';
+UPDATE STEAMCHARTS SET gamename = 'Heroes of the Three Kingdoms' WHERE gamename = '<U+4E09><U+56FD><U+7FA4><U+82F1><U+4F20>8 Heroes of the Three Kingdoms 8';
+UPDATE STEAMCHARTS SET gamename = 'Train Sim World 2' WHERE gamename = 'Train Sim World� 2';
+UPDATE STEAMCHARTS SET gamename = 'STAR WARS: The Old Republic' WHERE gamename = 'STAR WARS�: The Old Republic�';
+UPDATE STEAMCHARTS SET gamename = 'eFootball PES 2021 Season Update' WHERE gamename = 'eFootball PES 2021 SEASON UPDATE';
+UPDATE STEAMCHARTS SET gamename = 'STAR WARS: Battlefront 2' WHERE gamename = 'STAR WARS� Battlefront� II';
+UPDATE STEAMCHARTS SET gamename = 'Middle-earth: Shadow of War' WHERE gamename = 'Middle-earth�: Shadow of War�';
+UPDATE STEAMCHARTS SET gamename = 'Romance of the Three Kingdoms XIV' WHERE gamename = 'ROMANCE OF THE THREE KINGDOMS XIV';
+UPDATE STEAMCHARTS SET gamename = 'PGA Tour 2K21' WHERE gamename = 'PGA TOUR 2K21';
+UPDATE STEAMCHARTS SET gamename = 'Need for Speed Heat' WHERE gamename = 'Need for Speed� Heat ';
+UPDATE STEAMCHARTS SET gamename = 'Mass Effect: Andromeda' WHERE gamename = 'Mass Effect�: Andromeda';
+UPDATE STEAMCHARTS SET gamename = 'EA Sports FIFA 21' WHERE gamename = 'EA SPORTS� FIFA 21 ';
+UPDATE STEAMCHARTS SET gamename = 'Dragon Age Inquisition' WHERE gamename = 'Dragon Age� Inquisition';
+UPDATE STEAMCHARTS SET gamename = 'Command & Conquer Remastered Collection' WHERE gamename = 'Command & Conquer� Remastered Collection';
+UPDATE STEAMCHARTS SET gamename = 'Battlefield V' WHERE gamename = 'Battlefield� V';
+UPDATE STEAMCHARTS SET gamename = 'Battlefield 4' WHERE gamename = 'Battlefield 4� ';
+UPDATE STEAMCHARTS SET gamename = 'Battlefield 1' WHERE gamename = 'Battlefield 1 �';
+UPDATE STEAMCHARTS SET gamename = 'Sekiro: Shadows Die Twice' WHERE gamename = 'Sekiro�: Shadows Die Twice';
+UPDATE STEAMCHARTS SET gamename = 'STAR WARS Jedi: Fallen Order' WHERE gamename = 'STAR WARS Jedi: Fallen Order� ';
+UPDATE STEAMCHARTS SET gamename = 'ACE COMBAT 7: Skies Unknown' WHERE gamename = 'ACE COMBAT� 7: SKIES UNKNOWN';   
+UPDATE STEAMCHARTS SET gamename = 'Ni no Kuni II: Revenant Kingdom' WHERE gamename = 'Ni no Kuni� II: Revenant Kingdom'; 
+UPDATE STEAMCHARTS SET gamename = 'Hitman 2' WHERE gamename = 'HITMAN� 2'; 
+    
