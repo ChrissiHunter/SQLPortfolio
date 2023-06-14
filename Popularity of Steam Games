@@ -10,7 +10,7 @@ GROUP BY gamename
 HAVING gamename LIKE "%�%"
 ORDER BY MIN(year) DESC;
 
--- Data cleaning game names. Removed unrecognized characters. Standardized capitalizations. Removed " " from the beginning and ending of title
+-- Data cleaning game names. Removed unrecognized characters. Removed " " from the beginning and ending of title
 
 UPDATE STEAMCHARTS SET gamename = 'The Sims 4' WHERE gamename = 'The Sims� 4';
 UPDATE STEAMCHARTS SET gamename = 'Heroes of the Three Kingdoms' WHERE gamename = '<U+4E09><U+56FD><U+7FA4><U+82F1><U+4F20>8 Heroes of the Three Kingdoms 8';
