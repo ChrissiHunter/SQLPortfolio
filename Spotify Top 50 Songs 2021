@@ -1,7 +1,9 @@
---Spotify's Top 50 Songs List in 2021
---I downloaded Spotify's data from Kaggle and created
---a table to insert the data into. 
---Finally, I used SQL to analyze the data.
+/*
+    Spotify's Top 50 Songs List in 2021
+    I downloaded Spotify's data from Kaggle and created
+    a table to insert the data into. 
+    Finally, I used SQL to analyze the data.
+*/
 
 
 --Table creation
