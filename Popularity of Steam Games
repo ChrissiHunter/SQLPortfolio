@@ -20,7 +20,7 @@ CREATE TABLE SteamCharts (
     avg           NUMERIC NOT NULL,
     gain          NUMERIC NOT NULL,
     peak          INTEGER NOT NULL,
-    avg_peak_perc         NOT NULL
+    avg_peak_perc NUMERIC NOT NULL
 );
 
 INSERT INTO SteamCharts (
