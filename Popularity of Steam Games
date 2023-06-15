@@ -18,7 +18,7 @@ CREATE TABLE SteamCharts (
     year          TEXT    NOT NULL,
     month         TEXT    NOT NULL,
     avg           NUMERIC NOT NULL,
-    gain                  NOT NULL,
+    gain          NUMERIC NOT NULL,
     peak          INTEGER NOT NULL,
     avg_peak_perc         NOT NULL
 );
