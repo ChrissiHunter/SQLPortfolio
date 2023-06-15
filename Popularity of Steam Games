@@ -3,24 +3,70 @@
 -- Licensed: CCO - Public Domain by Michal Bogacz 
 -- https://www.kaggle.com/datasets/michau96/popularity-of-games-on-steam
 
--- Identifying unrecognized characters imported from csv file
+-- Table set up and restrictions
+PRAGMA foreign_keys = 0;
 
+CREATE TABLE sqlitestudio_temp_table AS SELECT *
+                                          FROM SteamCharts;
+
+DROP TABLE SteamCharts;
+
+CREATE TABLE SteamCharts (
+    id            INTEGER PRIMARY KEY ASC AUTOINCREMENT
+                          NOT NULL,
+    gamename      TEXT    NOT NULL,
+    year          TEXT    NOT NULL,
+    month         TEXT    NOT NULL,
+    avg           NUMERIC NOT NULL,
+    gain                  NOT NULL,
+    peak          INTEGER NOT NULL,
+    avg_peak_perc         NOT NULL
+);
+
+INSERT INTO SteamCharts (
+                            id,
+                            gamename,
+                            year,
+                            month,
+                            avg,
+                            gain,
+                            peak,
+                            avg_peak_perc
+                        )
+                        SELECT id,
+                               gamename,
+                               year,
+                               month,
+                               avg,
+                               gain,
+                               peak,
+                               avg_peak_perc
+                          FROM sqlitestudio_temp_table;
+
+DROP TABLE sqlitestudio_temp_table;
+
+PRAGMA foreign_keys = 1;
+
+-- Identifying unrecognized characters imported from csv file
 SELECT DISTINCT gamename FROM STEAMCHARTS
 GROUP BY gamename
 HAVING gamename LIKE "%�%"
 ORDER BY MIN(year) DESC;
 
 -- Identifying unrecognized Chinese characters
-
 SELECT DISTINCT gamename FROM STEAMCHARTS
 GROUP BY gamename
 HAVING gamename LIKE "%<%"
 ORDER BY MIN(year) DESC;
 
--- Data cleaning game names. Removed unrecognized characters. Removed " " from the beginning and ending of title
+-- Data cleaning game names. Removed unrecognized characters. Removed " " from the beginning and ending of title.
+-- Removed '%' from the end of avg_peak_perc
 
 UPDATE STEAMCHARTS SET gamename = TRIM (gamename);
+UPDATE STEAMCHARTS SET month = TRIM(month);
+UPDATE STEAMCHARTS SET avg_peak_perc = TRIM(avg_peak_perc,'%');
 
+-- Removed � from gamename
 UPDATE STEAMCHARTS SET gamename = 'The Sims 4' WHERE gamename = 'The Sims� 4';
 UPDATE STEAMCHARTS SET gamename = 'Heroes of the Three Kingdoms' WHERE gamename = '<U+4E09><U+56FD><U+7FA4><U+82F1><U+4F20>8 Heroes of the Three Kingdoms 8';
 UPDATE STEAMCHARTS SET gamename = 'Train Sim World 2' WHERE gamename = 'Train Sim World� 2';
@@ -89,6 +135,8 @@ UPDATE STEAMCHARTS SET gamename = 'Brutal Legend' WHERE gamename = 'Br�tal Leg
 UPDATE STEAMCHARTS SET gamename = 'Battlefield: Bad Company 2' WHERE gamename = 'Battlefield: Bad Company� 2';
 UPDATE STEAMCHARTS SET gamename = 'Ages of Empires III (2007)' WHERE gamename = 'Age of Empires� III (2007)';
 
+
+-- Removed Chinese characters imported incorrectly from gamename
 UPDATE STEAMCHARTS SET gamename = 'Mahjong Soul' WHERE gamename = '<U+96C0><U+9B42><U+9EBB><U+5C06>(MahjongSoul)';
 UPDATE STEAMCHARTS SET gamename = 'Path of Wuxia' WHERE gamename = '<U+4FE0><U+4E4B><U+9053>(PathOfWuxia)';
 UPDATE STEAMCHARTS SET gamename = 'Notes of Soul' WHERE gamename = '<U+63A2><U+7075><U+7B14><U+8A18>/<U+62FE><U+9057><U+8BB0>-1v5(Notes of Soul)';
@@ -96,3 +144,9 @@ UPDATE STEAMCHARTS SET gamename = 'Bloody Spell' WHERE gamename = '<U+55DC><U+88
 UPDATE STEAMCHARTS SET gamename = 'The Scroll of Taiwu' WHERE gamename = '<U+592A><U+543E><U+7ED8><U+5377> The Scroll Of Taiwu';
 UPDATE STEAMCHARTS SET gamename = 'Gujian 3' WHERE gamename = '<U+53E4><U+5251><U+5947><U+8C2D><U+4E09>(Gujian3)';
 UPDATE STEAMCHARTS SET gamename = 'Hidden Star in Four Seasons' WHERE gamename = '<U+6771><U+65B9><U+5929><U+7A7A><U+748B> ~ Hidden Star in Four Seasons.';
+
+-- Replaced "NA" to 0 on gain
+SELECT gamename, gain FROM SteamCharts
+    WHERE gain LIKE "NA";
+UPDATE SteamCharts SET gain = 0 WHERE gain = 'NA';
+ 
