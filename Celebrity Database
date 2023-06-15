@@ -1,4 +1,7 @@
-/* Table about celebrities, their spouses, and the year they were married.*/
+/* 
+    Table about celebrities, their spouses, 
+    and the year they were married. 
+*/
 
 CREATE TABLE famous_people (id INTEGER PRIMARY KEY, celeb_name TEXT, legal_name TEXT, married_yr INTEGER, spouse INTEGER);
 
@@ -33,7 +36,13 @@ INSERT INTO famous_people VALUES (28, "Rita Wilson", "Margarita Ibranhimoff", 19
 INSERT INTO famous_people VALUES (29, "Viola Davis", "Viola Davis", 2003, 30);
 INSERT INTO famous_people VALUES (30, "Julius Tennon", "Julius William Tennon", 2003, 29);
 
-/* Table about a celebrity's career and what they are known for.*/
+
+
+
+/* 
+    Table about a celebrity's career 
+    and what they are known for.
+*/
 
 CREATE TABLE career (id INTEGER PRIMARY KEY, person_id INTEGER, job TEXT, famous_work TEXT);
 
@@ -69,8 +78,11 @@ INSERT INTO career VALUES (29,29, "Actress/Producer", "Recieved Emmy, Grammer, O
 INSERT INTO career VALUES (30,30, "Actor/Producer", "Dazed and Confused");
 
 
-/*Query that shows famous couples and their marriage year.
-Marriage is ordered from oldest to youngest.*/
+
+/*
+    Query that shows famous couples and their marriage year.
+    Marriage is ordered from oldest to youngest.
+*/
 
 SELECT famous_people.celeb_name AS name, spouse.celeb_name AS spouse, famous_people.married_yr
 FROM famous_people
@@ -79,9 +91,13 @@ FROM famous_people
     GROUP BY famous_people.married_yr
     ORDER BY famous_people.married_yr;
 
-/*Lists all celebrities in the database and 
-provides their job type and what work they were famous for.  
-Removes Heather Helm who is not a known celebrity.*/
+
+
+/*
+    Lists all celebrities in the database and 
+    provides their job type and what work they were famous for.  
+    Removes Heather Helm who is not a known celebrity.
+*/
 
 SELECT famous_people.celeb_name, famous_people.legal_name AS legal_name, career.job AS job, career.famous_work
 FROM  famous_people
@@ -90,14 +106,27 @@ FROM  famous_people
     WHERE career.job NOT NULL
     ORDER BY famous_people.celeb_name;
 
-/*Finds famous work that 2 or more celebrities worked on together.*/ 
+
+
+
+/* 
+    Finds famous work that 2 or more 
+    celebrities worked on together. 
+*/ 
+
 SELECT career.famous_work, COUNT(career.famous_work)
 FROM career
     GROUP BY career.famous_work
     HAVING COUNT(career.famous_work)>1;
 
-/*From the previous query, identifies which actors were in 
-"How I Met Your Mother", "Game of Thrones" and "Scooby-Doo" together.*/
+
+
+
+
+/*
+    From the previous query, identifies which actors were in 
+    "How I Met Your Mother", "Game of Thrones" and "Scooby-Doo" together.
+*/
 
 SELECT famous_people.celeb_name, career.famous_work
 FROM famous_people
