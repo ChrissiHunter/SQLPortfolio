@@ -6,6 +6,8 @@
 */
 
 
+
+
 --Table creation
 
 CREATE TABLE BIT_DB.SpotifyData(
@@ -28,9 +30,15 @@ CREATE TABLE BIT_DB.SpotifyData(
     duration_ms INTEGER NOT NULL,
     time_signature INTEGER NOT NULL);
     
---I imported SpotifyData.csv into the table. 
---Then I started to analyze the data. 
-    
+
+
+
+/*
+    I imported SpotifyData.csv into the table. 
+    Then I started to analyze the data. 
+*/
+
+
 --What is the most popular song and who is it by?
 
 SELECT spot.track_name AS song, spot.artist_name, spot.popularity
@@ -39,14 +47,24 @@ FROM BIT_DB.SpotifyData spot
     ORDER BY spot.popularity DESC;
     
 
+
+
+
+
 --What is the longest running song and how long is it?
 
 SELECT spot.track_name AS song, spot.artist_name, MAX(spot.duration_ms)
 FROM BIT_DB.SpotifyData spot;
 
---What are the top 10 songs that would be good to play at a club 
---based upon dancability and high energy (energy > 0.700).  Returns track name, artist, 
---danceablity index and energy index.
+
+
+
+
+/* 
+    What are the top 10 songs that would be good to play at a club 
+    based upon dancability and high energy (energy > 0.700).  Returns track name, artist, 
+    danceablity index and energy index.
+*/
 
 SELECT spot.track_name AS song, spot.artist_name, spot.danceability, spot.energy
 FROM BIT_DB.SpotifyData spot
@@ -54,7 +72,11 @@ FROM BIT_DB.SpotifyData spot
     ORDER BY spot.danceability DESC
     LIMIT 10;
     
+
+
+
 --What key are the songs played in?  Returns the name of the song and the key.
+
 SELECT spot.track_name AS song, 
     CASE 
         WHEN spot.song_key = 0 THEN "C"
@@ -72,7 +94,13 @@ SELECT spot.track_name AS song,
     END AS musical_key         
 FROM BIT_DB.SpotifyData spot;
 
+
+
+
+
+
 --What are the most popular keys in the top 50?
+
 SELECT COUNT(spot.track_name) AS quantity, 
     CASE 
         WHEN spot.song_key = 0 THEN "C"
@@ -93,9 +121,15 @@ FROM BIT_DB.SpotifyData spot
     ORDER BY COUNT(spot.track_name) DESC
     LIMIT 4;
  
---What range of keys create the most popular songs (popularity rating 90 or higher)?
---Helps predicts a hit based upon the key. 
---Results show that songs in the range of A# to C are most likely to be a hit.
+
+
+
+
+/* 
+    What range of keys create the most popular songs (popularity rating 90 or higher)?
+    Helps predicts a hit based upon the key. 
+    Results show that songs in the range of A# to C are most likely to be a hit.
+*/
   
 SELECT COUNT(spot.track_name) num_of_songs, 
     CASE 
@@ -117,7 +151,12 @@ FROM BIT_DB.SpotifyData spot
     GROUP BY spot.song_key
     ORDER BY num_of_songs DESC
     LIMIT 4;
-     
+
+
+
+
+
+
 
 --Are major or minor keys more present in the most popular songs?
 
@@ -131,18 +170,31 @@ FROM BIT_DB.SpotifyData spot
      GROUP BY spot.song_mode;
      
 
---What is the range BPM for the top dancaeable songs? 
--- This helps dance clubs identify the ideal BPM dance range.
+
+
+
+
+/*
+    What is the range BPM for the top dancaeable songs? 
+    This helps dance clubs identify the ideal BPM dance range.
+*/ 
+
 SELECT MIN(spot.tempo) AS min_tempo_bpm, MAX(spot.tempo) AS max_tempo_bpm
 FROM BIT_DB.SpotifyData spot
     WHERE spot.danceability > 0.8
     ORDER BY spot.danceability DESC;
 
 
--- What are the average characteristics of the top 50 songs?  
---Are they more like rap and include spoken words?
---Are they more accoustical or instrumental?
---Identifies the the above characteristics based upon the aggregated averages.
+
+
+
+/*
+    What are the average characteristics of the top 50 songs?  
+    Are they more like rap and include spoken words?
+    Are they more accoustical or instrumental?
+    Identifies the the above characteristics based upon the aggregated averages.
+*/
+
 SELECT 
     CASE 
         WHEN AVG(spot.speechiness)> 0.33 THEN "rap"
@@ -161,9 +213,15 @@ SELECT
             END ) AS instrumental_characteristics
  FROM BIT_DB.SpotifyData spot;
 
---Calculate the average popularity for the artists in the Spotify data table. 
---Then, for every artist with an average popularity of 90 or above, show their name, 
---their average popularity, and label them as a “Top Star”.  
+
+
+
+
+/*
+    Calculate the average popularity for the artists in the Spotify data table. 
+    Then, for every artist with an average popularity of 90 or above, show their name, 
+    their average popularity, and label them as a “Top Star”.  
+*/
 
 WITH pop_avg_CTE AS (
     SELECT 

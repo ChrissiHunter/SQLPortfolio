@@ -1,35 +1,68 @@
 --Create a yarn shop database with three distinct locations
 
---Columns include primary key, yarn size, yarn color, quantity of skeins in stock, store identification number and price per skein
+/* 
+    Columns include primary key, yarn size, yarn color, 
+    quantity of skeins in stock, store identification number and price per skein
+*/
+
+--Table creation
+
 CREATE TABLE yarn_shop (crochet_id INTEGER PRIMARY KEY, yarn_size INTEGER, yarn_color TEXT, in_stock INTEGER, store_number INTEGER, price NUMERIC);
 
---store 1
+
+
+
+--store 1 imput values
+
 INSERT INTO yarn_shop VALUES(1, 3, "Red", 10, 1, 4.99);
 INSERT INTO yarn_shop VALUES (2, 4, "Blue",2, 1, 5.99);
 INSERT INTO yarn_shop VALUES (3, 3, "Yellow", 0, 1, 3.99);
 INSERT INTO yarn_shop VALUES (4, 6, "Rainbow", 8, 1, 7.99);
 INSERT INTO yarn_shop VALUES (5, 2, "Orange", 3, 1, 5.99);
---store 2
+
+--store 2 input values
+
 INSERT INTO yarn_shop VALUES (6, 3, "Red", 4, 2, 4.99);
 INSERT INTO yarn_shop VALUES (7, 4, "Blue", 11, 2, 5.99);
 INSERT INTO yarn_shop VALUES (8, 3, "Yellow", 13, 2, 3.99);
 INSERT INTO yarn_shop VALUES (9, 6, "Rainbow", 9, 2, 7.99);
 INSERT INTO yarn_shop VALUES (10, 2, "Orange", 5, 2, 5.99);
---store 3
+
+--store 3 input values
+
 INSERT INTO yarn_shop VALUES (11, 3, "Red", 12, 3, 4.99);
 INSERT INTO yarn_shop VALUES (12, 4, "Blue", 22, 3, 5.99);
 INSERT INTO yarn_shop VALUES (13, 3, "Yellow", 8, 3, 3.99);
 INSERT INTO yarn_shop VALUES (14, 6, "Rainbow", 0, 3, 7.99);
 INSERT INTO yarn_shop VALUES (15, 2, "Orange", 7, 3, 5.99);
 
+
+
+
+
 --display database ordered by price
+
 SELECT * FROM yarn_shop ORDER BY price;
 
+
+
+
+
 --How many skeins of yarn are in stock at store #2?
+
 SELECT SUM(in_stock) FROM yarn_shop WHERE store_number = 2;
 
+
+
+
+
 --What is the average price of a skein of yarn?
+
 SELECT AVG(price) FROM yarn_shop WHERE store_number = 1;
 
+
+
+
 --What colors are available for size 3?
+
 SELECT yarn_size, yarn_color FROM yarn_shop WHERE yarn_size = 3 GROUP BY yarn_color;

@@ -1,7 +1,10 @@
 /*
-Sales from an online furniture store
-Collected by: https://www.khanacademy.org/profile/charlesb2000/
+  Sales from an online furniture store
+  Collected by: https://www.khanacademy.org/profile/charlesb2000/
 */
+
+-- Table Creation
+
 CREATE TABLE sales(
   ID INTEGER  NOT NULL PRIMARY KEY
 , transaction_date TEXT
@@ -17,6 +20,12 @@ CREATE TABLE sales(
 , latitude REAL
 , longitude REAL
 );
+
+
+
+
+
+--Inserting values into table
 
 INSERT INTO sales(transaction_date,product,price,payment_type,name,city,state,country,account_created,last_login,latitude,longitude) VALUES ('1/2/09 6:17','Chair',1200,'Mastercard','Carolina','Basildon','England','United Kingdom','1/2/09 6:00','1/2/09 6:08',51.5,-1.1166667);
 INSERT INTO sales(transaction_date,product,price,payment_type,name,city,state,country,account_created,last_login,latitude,longitude) VALUES ('1/2/09 4:53','Chair',1200,'Visa','Betina','Parkville','MO','United states','1/2/09 4:42','1/2/09 7:49',39.195,-94.68194);
@@ -120,6 +129,10 @@ INSERT INTO sales(transaction_date,product,price,payment_type,name,city,state,co
 INSERT INTO sales(transaction_date,product,price,payment_type,name,city,state,country,account_created,last_login,latitude,longitude) VALUES ('1/13/09 19:39','Chair',1200,'Visa','Jolene','Englewood','CO','United states','1/6/09 22:00','1/14/09 22:02',39.64778,-104.98722);
 
 
+
+
+
+
 --Identifies number of items sold and their average cost per item
 
 SELECT product, COUNT (*) AS items_sold, AVG(price) AS avg_price  
@@ -127,15 +140,24 @@ FROM sales
   GROUP BY product;
 
 
-/*If providing payment options to international customers, 
-which form of payment is most popular? What is the average international 
-transaction amount per credit card?*/
+
+
+
+/*
+  If providing payment options to international customers, 
+  which form of payment is most popular? What is the average international 
+  transaction amount per credit card?
+*/
 
 SELECT payment_type, COUNT(DISTINCT country) AS countries, ROUND(AVG(price),2) AS avg_transact
 FROM sales
   WHERE country <> "United states"
   GROUP BY payment_type
   ORDER by COUNT (DISTINCT country) DESC;
+
+
+
+
 
 
 --Labels a country's total sales as top, above, average or needs growth according to its sale total
@@ -152,9 +174,14 @@ FROM sales
    ORDER BY SUM(price) DESC;
 
 
-/*Identifies the top 10 states in the US or Canada that have the sales greater than $3000 
-and returns the number of transactions, total sales, minimum sale, maximum sale, and 
-average sale per state*/
+
+
+
+/*
+  Identifies the top 10 states in the US or Canada that have the sales greater than $3000 
+  and returns the number of transactions, total sales, minimum sale, maximum sale, and 
+  average sale per state.
+*/
 
 SELECT state, count(*) AS transactions, SUM (price) AS total_sales, 
     MIN(price) AS min_transact, MAX(price) AS max_transact, AVG(price) AS avg_transact 

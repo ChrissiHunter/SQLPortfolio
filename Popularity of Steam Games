@@ -1,9 +1,24 @@
--- Popularity of Games on Steam (2012 to 2021)
--- csv downloaded from kaggle.com
--- Licensed: CCO - Public Domain by Michal Bogacz 
--- https://www.kaggle.com/datasets/michau96/popularity-of-games-on-steam
+/* 
+    Popularity of Games on Steam (2012 to 2021)
+    csv downloaded from kaggle.com
+    Licensed: CCO - Public Domain by Michal Bogacz 
+    https://www.kaggle.com/datasets/michau96/popularity-of-games-on-steam
+*/
 
--- Table set up and restrictions
+
+
+/* 
+    Table set up and restrictions.
+        gamename - Title of Game
+        year - Observed Year
+        month - Observed Month
+        avg - Average number of players at the same time for that month
+        gain - Difference in average compared to the previous month (0 = First Month)
+        peak - Highest number of players at the same time for that month
+        avg_peak_perc - 
+*/
+
+
 PRAGMA foreign_keys = 0;
 
 CREATE TABLE sqlitestudio_temp_table AS SELECT *
@@ -47,26 +62,57 @@ DROP TABLE sqlitestudio_temp_table;
 
 PRAGMA foreign_keys = 1;
 
+
+
+
+
+
+
+/*
+    Data cleaning.
+    Removed unrecognized or unwanted characters and spaces.  Simplified gamename to English only 
+    (removed the Chinese character references).  
+*/
+
+
+-- Removed " " from the beginning and ending of title and month
+
+UPDATE STEAMCHARTS SET gamename = TRIM (gamename);
+UPDATE STEAMCHARTS SET month = TRIM(month);
+
+
+
+-- Removed '%' from the end of avg_peak_perc
+
+UPDATE STEAMCHARTS SET avg_peak_perc = TRIM(avg_peak_perc,'%');
+
+
+
+-- Replaced "NA" to 0 on gain
+
+SELECT gamename, gain FROM SteamCharts
+    WHERE gain LIKE "NA";
+UPDATE SteamCharts SET gain = 0 WHERE gain = 'NA';
+
+
+
+-- Replaced "NaN" to 0 for avg_peak_perc 
+
+SELECT gamename, avg_peak_perc FROM SteamCharts
+    WHERE avg_peak_perc = "NaN";
+UPDATE SteamCharts SET avg_peak_perc = 0 WHERE avg_peak_perc = "NaN";
+
+
+
 -- Identifying unrecognized characters imported from csv file
+
 SELECT DISTINCT gamename FROM STEAMCHARTS
 GROUP BY gamename
 HAVING gamename LIKE "%�%"
 ORDER BY MIN(year) DESC;
 
--- Identifying unrecognized Chinese characters
-SELECT DISTINCT gamename FROM STEAMCHARTS
-GROUP BY gamename
-HAVING gamename LIKE "%<%"
-ORDER BY MIN(year) DESC;
-
--- Data cleaning game names. Removed unrecognized characters. Removed " " from the beginning and ending of title.
--- Removed '%' from the end of avg_peak_perc
-
-UPDATE STEAMCHARTS SET gamename = TRIM (gamename);
-UPDATE STEAMCHARTS SET month = TRIM(month);
-UPDATE STEAMCHARTS SET avg_peak_perc = TRIM(avg_peak_perc,'%');
-
 -- Removed � from gamename
+
 UPDATE STEAMCHARTS SET gamename = 'The Sims 4' WHERE gamename = 'The Sims� 4';
 UPDATE STEAMCHARTS SET gamename = 'Heroes of the Three Kingdoms' WHERE gamename = '<U+4E09><U+56FD><U+7FA4><U+82F1><U+4F20>8 Heroes of the Three Kingdoms 8';
 UPDATE STEAMCHARTS SET gamename = 'Train Sim World 2' WHERE gamename = 'Train Sim World� 2';
@@ -136,7 +182,16 @@ UPDATE STEAMCHARTS SET gamename = 'Battlefield: Bad Company 2' WHERE gamename = 
 UPDATE STEAMCHARTS SET gamename = 'Ages of Empires III (2007)' WHERE gamename = 'Age of Empires� III (2007)';
 
 
+
+-- Identifying unrecognized Chinese characters
+
+SELECT DISTINCT gamename FROM STEAMCHARTS
+GROUP BY gamename
+HAVING gamename LIKE "%<%"
+ORDER BY MIN(year) DESC;
+
 -- Removed Chinese characters imported incorrectly from gamename
+
 UPDATE STEAMCHARTS SET gamename = 'Mahjong Soul' WHERE gamename = '<U+96C0><U+9B42><U+9EBB><U+5C06>(MahjongSoul)';
 UPDATE STEAMCHARTS SET gamename = 'Path of Wuxia' WHERE gamename = '<U+4FE0><U+4E4B><U+9053>(PathOfWuxia)';
 UPDATE STEAMCHARTS SET gamename = 'Notes of Soul' WHERE gamename = '<U+63A2><U+7075><U+7B14><U+8A18>/<U+62FE><U+9057><U+8BB0>-1v5(Notes of Soul)';
@@ -145,8 +200,181 @@ UPDATE STEAMCHARTS SET gamename = 'The Scroll of Taiwu' WHERE gamename = '<U+592
 UPDATE STEAMCHARTS SET gamename = 'Gujian 3' WHERE gamename = '<U+53E4><U+5251><U+5947><U+8C2D><U+4E09>(Gujian3)';
 UPDATE STEAMCHARTS SET gamename = 'Hidden Star in Four Seasons' WHERE gamename = '<U+6771><U+65B9><U+5929><U+7A7A><U+748B> ~ Hidden Star in Four Seasons.';
 
--- Replaced "NA" to 0 on gain
-SELECT gamename, gain FROM SteamCharts
-    WHERE gain LIKE "NA";
-UPDATE SteamCharts SET gain = 0 WHERE gain = 'NA';
- 
+
+
+
+
+
+/* 
+    What are the runtimes per game?  Converts to YearMonth (201310 would be October 2013)
+    Orders by the oldest date.
+*/
+
+-- Month conversion. Virtual Table m, mo is the month
+WITH m AS (
+     SELECT id, 
+            CASE 
+                WHEN month = 'January' THEN '01'
+                WHEN month = 'February' THEN '02'
+                WHEN month = 'March' THEN '03'
+                WHEN month = 'April' THEN '04'
+                WHEN month = 'May' THEN '05'
+                WHEN month = 'June' THEN '06'
+                WHEN month = 'July' THEN '07'
+                WHEN month = 'August' THEN '08'
+                WHEN month = 'September' THEN '09'
+                WHEN month = 'October' THEN '10'
+                WHEN month = 'November' THEN '11'
+                ELSE '12'
+            END AS mo
+        FROM SteamCharts
+    )
+
+SELECT 
+    gamename, 
+    MIN (year||mo) AS begin_date,
+    MAX (year||mo) AS end_date
+        
+FROM SteamCharts
+    INNER JOIN m
+    ON SteamCharts.id = m.id
+    GROUP BY gamename
+    ORDER BY begin_date;
+
+/* 
+    What is the most popular game based upon monthly average
+    number of players online at the same time?
+    When did those averages occur?
+    
+    Most popular game: PLAYERUNKNOWN'S BATTLEGROUNDS (9 out of 10)
+    Best online average: January 2018
+    
+*/
+
+-- Month conversion. Virtual Table m, mo is the month
+WITH m AS (
+     SELECT id, 
+            CASE 
+                WHEN month = 'January' THEN '01'
+                WHEN month = 'February' THEN '02'
+                WHEN month = 'March' THEN '03'
+                WHEN month = 'April' THEN '04'
+                WHEN month = 'May' THEN '05'
+                WHEN month = 'June' THEN '06'
+                WHEN month = 'July' THEN '07'
+                WHEN month = 'August' THEN '08'
+                WHEN month = 'September' THEN '09'
+                WHEN month = 'October' THEN '10'
+                WHEN month = 'November' THEN '11'
+                ELSE '12'
+            END AS mo
+        FROM SteamCharts
+    )
+
+SELECT 
+    gamename, 
+    year||mo AS target_date,
+    avg
+         
+FROM SteamCharts
+    INNER JOIN m 
+    ON SteamCharts.id = m.id
+    ORDER BY avg DESC
+    LIMIT 10;
+
+/* 
+    Orders the months based upon the total
+    number of peaks that occured during that month.
+
+    Top 3 months with the most peaks:  February, January, December
+    Lowest peaks: May, April and March
+
+    Analysis: May consider releasing a new game leading up to December through February
+*/
+
+SELECT month, COUNT(peak)
+FROM SteamCharts
+GROUP BY month
+ORDER BY COUNT(peak) DESC;
+
+
+/*
+    Lists the game names whose average peak percentage was
+    greater than 75%.  Counts the number of times that 
+    game had an average peak percentage > 75%. Returns the max
+    average peak percentage for that game and averages the number
+    of onine players playing at the same time through the lifetime of that game.
+
+    Helps identify the overall popularity of a game based upon the 
+    consistency of online players (average peak percentage), the number of times by month
+    the consistency was greater than 75%, and the overall average number of online
+    players at the same time.
+*/
+
+SELECT gamename, 
+    MAX(avg_peak_perc), 
+    COUNT (avg_peak_perc), 
+    ROUND(AVG(avg),2)
+FROM SteamCharts
+    WHERE avg_peak_perc > 75
+    GROUP BY gamename
+    ORDER BY avg_peak_perc DESC;
+
+/*
+    Lists the maximum gain from one month's online simultaneous player average
+    to the next for all of the released STAR WARS games.  Also provides
+    month in which those gains occured.
+*/
+
+SELECT gamename, MAX(gain), month
+FROM SteamCharts
+    GROUP BY gamename
+    HAVING gamename LIKE "STAR WARS%"
+    ORDER BY MAX(gain) DESC;
+
+
+
+/* 
+    Lists all games with their average gain from month to month
+    of simulataneous online players over the course of the game's lifetime.
+*/
+
+SELECT gamename, ROUND (AVG(gain),2)
+FROM SteamCharts
+    GROUP BY gamename
+    ORDER BY gamename;
+
+
+/*
+    What games were released at Christmas time?
+*/
+
+WITH m AS (
+     SELECT id, 
+            CASE 
+                WHEN month = 'January' THEN '01'
+                WHEN month = 'February' THEN '02'
+                WHEN month = 'March' THEN '03'
+                WHEN month = 'April' THEN '04'
+                WHEN month = 'May' THEN '05'
+                WHEN month = 'June' THEN '06'
+                WHEN month = 'July' THEN '07'
+                WHEN month = 'August' THEN '08'
+                WHEN month = 'September' THEN '09'
+                WHEN month = 'October' THEN '10'
+                WHEN month = 'November' THEN '11'
+                ELSE '12'
+            END AS mo
+        FROM SteamCharts
+    )
+
+SELECT 
+    gamename, 
+    MIN (year||mo) AS release_date      
+FROM SteamCharts
+    INNER JOIN m
+    ON SteamCharts.id = m.id
+    GROUP BY gamename
+    HAVING release_date LIKE "%12"
+    ORDER BY release_date;
+
