@@ -1,0 +1,83 @@
+/* 
+    Created a table to house the Kickstarter data downloaded 
+    from Kaggle.  
+    
+    "Kickstarter Projects" by Ulrik Thyge Pedersen
+    https://www.kaggle.com/datasets/ulrikthygepedersen/kickstarter-projects
+
+    Column Information:
+        name - Name of Kickstarter Project
+        category - Major Category Type
+        type - Subcategory Type
+        country - Publishing Country
+        launch - Launch Date
+        deadline - Deadline of Project 
+        goal - Crowdfunding Goal
+        pledged - Pledged Amount for Project
+        backers - Number of Backers
+        state - At the time of mining, current state of project.
+*/
+
+CREATE TABLE kickstarter (
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    type TEXT NOT NULL,
+    country TEXT NOT NULL,
+    launch TEXT NOT NULL,
+    deadline TEXT NOT NULL,
+    goal INTEGER NOT NULL,
+    pledged INTEGER NOT NULL,
+    backers INTEGER NOT NULL,
+    state TEXT NOT NULL
+)
+
+
+
+
+/* 
+    I imported a .csv file from Kaggle
+    https://www.kaggle.com/datasets/ulrikthygepedersen/kickstarter-projects
+*/
+
+
+
+
+/*
+    Data Cleaning and Preparation
+*/
+
+SELECT TRIM(name) FROM kickstarter;
+SELECT TRIM(category) FROM kickstarter;
+SELECT TRIM(type) FROM kickstarter;
+SELECT TRIM(country) FROM kickstarter;
+SELECT TRIM(state) FROM kickstarter;
+
+
+
+
+
+/*
+    Initial Investigation of the data
+*/
+
+-- 374,853 total projects
+SELECT COUNT(*) FROM kickstarter;
+
+--Identifying Project Categories
+SELECT DISTINCT (category) FROM kickstarter;
+
+--Identifying Publishing Countries
+SELECT DISTINCT (country) FROM kickstarter;
+
+--Identifying the State of Projects
+SELECT DISTINCT (state) FROM kickstarter;
+
+--Identifying Subtype of Projects
+SELECT DISTINCT (type) FROM kickstarter;
+
+
+
+
+
+
