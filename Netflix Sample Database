@@ -1,5 +1,5 @@
 /* Netflix Database
-Inclucdes show id, title, rating, release year, description, 
+Includes show id, title, rating, release year, description, 
 director, cast, type, country, date added, duration, and where listed
 Taken from "CharlotteChaze/BreakIntoTech"*/
 
